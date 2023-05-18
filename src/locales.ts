@@ -171,7 +171,7 @@ class Locales extends Subscribe {
 			this.running = true;
 
 			// Fetch the data from the server
-			mouth.read('locale').then((list: any) => {
+			mouth.read('locales').then((list: any) => {
 
 				// If there's data
 				if(list) {
