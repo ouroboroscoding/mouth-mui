@@ -46,7 +46,7 @@ export default function Locales(props) {
     useEffect(() => {
         // If we have read rights
         if (rights.read) {
-            mouth.read('locale').then(recordsSet);
+            mouth.read('locales').then(recordsSet);
         }
         else {
             recordsSet([]);
