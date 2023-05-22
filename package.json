@@ -1,6 +1,6 @@
 {
 	"name": "@ouroboros/mouth-mui",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Components for use with the Mouth service",
 	"main": "src/index.js",
 	"types": "src/index.d.ts",
