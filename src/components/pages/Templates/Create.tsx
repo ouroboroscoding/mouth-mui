@@ -64,7 +64,7 @@ export default function Create(props: CreateProps) {
 	function change(field: string, value: any) {
 
 		// Set the new record
-		recordSet(o => {
+		recordSet((o: templateStruct) => {
 			const oRecord = clone(o);
 			oRecord[field] = value;
 			return oRecord;
@@ -75,14 +75,14 @@ export default function Create(props: CreateProps) {
 	function create() {
 
 		// Create the data in the system
-		mouth.create('template', record).then(data => {
+		mouth.create('template', record).then((data: string) => {
 
 			// Add the ID to the record
 			record._id = data;
 
 			// Let the parent know
 			props.onCreated(clone(record));
-		}, error => {
+		}, (error: responseErrorStruct) => {
 			if(error.code === errors.body.DB_DUPLICATE) {
 				refName.current?.error('Duplicate');
 			} else {

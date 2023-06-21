@@ -93,7 +93,7 @@ export default function Variables(props: VariablesProps) {
 		<Box>
 			<Grid container spacing={1}>
 				{omap(props.value, (v,k) =>
-					<React.Fragment>
+					<React.Fragment key={k}>
 						<Grid item xs={5}>{k}</Grid>
 						<Grid item xs={5}>{v}</Grid>
 						<Grid item xs={2}>

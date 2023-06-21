@@ -43,7 +43,7 @@ export default function Templates(props) {
     useEffect(() => {
         // If we have template read permissions
         if (rightsTemplate.read) {
-            mouth.read('locale').then(data => {
+            mouth.read('locales').then((data) => {
                 const oLocales = {};
                 for (const o of data) {
                     oLocales[o._id] = o.name;

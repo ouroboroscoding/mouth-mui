@@ -68,7 +68,7 @@ export default function Variables(props) {
     // Render
     return (React.createElement(Box, null,
         React.createElement(Grid, { container: true, spacing: 1 },
-            omap(props.value, (v, k) => React.createElement(React.Fragment, null,
+            omap(props.value, (v, k) => React.createElement(React.Fragment, { key: k },
                 React.createElement(Grid, { item: true, xs: 5 }, k),
                 React.createElement(Grid, { item: true, xs: 5 }, v),
                 React.createElement(Grid, { item: true, xs: 2 },
