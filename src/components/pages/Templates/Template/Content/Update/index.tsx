@@ -58,7 +58,7 @@ export default function Update(props: UpdateProps) {
 	function update() {
 
 		// Send the record data to the server
-		mouth.update(`template/${props.value.type}`, record).then(data => {
+		mouth.update(`template/${props.value.type}`, record).then(() => {
 			props.onUpdated({type: props.value.type, ...record});
 		}, (error: responseErrorStruct) => {
 			if(error.code === errors.body.DATA_FIELDS) {

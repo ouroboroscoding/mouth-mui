@@ -60,7 +60,7 @@ export default function Templates(props: TemplatesProps) {
 
 		// If we have template read permissions
 		if(rightsTemplate.read) {
-			mouth.read('locale').then(data => {
+			mouth.read('locales').then((data: Record<string, any>[]) => {
 				const oLocales: Record<string, string> = {};
 				for(const o of data) {
 					oLocales[o._id] = o.name;
