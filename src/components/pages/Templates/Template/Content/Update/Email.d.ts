@@ -6,8 +6,8 @@
  * @author Chris Nasr <chris@ouroboroscoding.com>
  * @created 2023-01-23
  */
-/// <reference types="react" />
 import PropTypes from 'prop-types';
+import React from 'react';
 import { contentStruct } from '../../';
 export type EmailProps = {
     errors: Record<string, any>;
@@ -24,7 +24,7 @@ export type EmailProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Email(props: EmailProps): JSX.Element;
+declare function Email(props: EmailProps): React.JSX.Element;
 declare namespace Email {
     var propTypes: {
         errors: PropTypes.Validator<object>;

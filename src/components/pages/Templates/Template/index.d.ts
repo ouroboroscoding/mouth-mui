@@ -6,10 +6,10 @@
  * @author Chris Nasr <chris@ouroboroscoding.com>
  * @created 2023-01-20
  */
-/// <reference types="react" />
 import PropTypes from 'prop-types';
+import React from 'react';
 import { responseErrorStruct } from '@ouroboros/body';
-import { rightsStruct } from '@ouroboros/brain-mui';
+import { rightsStruct } from '@ouroboros/brain-react';
 export type contentStruct = {
     _id?: string;
     _created?: number;
@@ -52,7 +52,7 @@ export type TemplateProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Template(props: TemplateProps): JSX.Element;
+declare function Template(props: TemplateProps): React.JSX.Element;
 declare namespace Template {
     var propTypes: {
         locales: PropTypes.Validator<{

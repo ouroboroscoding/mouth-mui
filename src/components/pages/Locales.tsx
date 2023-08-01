@@ -8,7 +8,7 @@
  */
 
 // Ouroboros modules
-import { Myself } from '@ouroboros/brain-mui';
+import { useRights } from '@ouroboros/brain-react';
 import clone from '@ouroboros/clone';
 import { Tree } from '@ouroboros/define'
 import { Form, Results } from '@ouroboros/define-mui';
@@ -57,7 +57,7 @@ export default function Locales(props: LocalesProps) {
 	const [records, recordsSet] = useState<any[]>([]);
 
 	// Hooks
-	const rights = Myself.useRights('mouth_locale');
+	const rights = useRights('mouth_locale');
 
 	// User / archived change effect
 	useEffect(() => {
@@ -83,7 +83,7 @@ export default function Locales(props: LocalesProps) {
 		return new Promise((resolve, reject) => {
 
 			// Create the new locale
-			mouth.create('locale').then((data: string) => {
+			mouth.create('locale', locale).then((data: string) => {
 
 				// If we were successful
 				if(data) {

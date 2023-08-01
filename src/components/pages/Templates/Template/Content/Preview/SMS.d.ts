@@ -6,8 +6,8 @@
  * @author Chris Nasr <chris@ouroboroscoding.com>
  * @created 2023-01-23
  */
-/// <reference types="react" />
 import PropTypes from 'prop-types';
+import React from 'react';
 export type SMSProps = {
     mobile: boolean;
     value: string;
@@ -22,7 +22,7 @@ export type SMSProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function SMS(props: SMSProps): JSX.Element;
+declare function SMS(props: SMSProps): React.JSX.Element;
 declare namespace SMS {
     var propTypes: {
         mobile: PropTypes.Validator<boolean>;

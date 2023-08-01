@@ -7,7 +7,7 @@
  * @created 2023-01-19
  */
 // Ouroboros modules
-import { Myself } from '@ouroboros/brain-mui';
+import { useRights } from '@ouroboros/brain-react';
 import clone from '@ouroboros/clone';
 import mouth from '@ouroboros/mouth';
 import { afindi } from '@ouroboros/tools';
@@ -37,8 +37,8 @@ export default function Templates(props) {
     const [locales, localesSet] = useState({});
     const [templates, templatesSet] = useState([]);
     // Hooks
-    const rightsContent = Myself.useRights('mouth_content');
-    const rightsTemplate = Myself.useRights('mouth_template');
+    const rightsContent = useRights('mouth_content');
+    const rightsTemplate = useRights('mouth_template');
     // User / archived change effect
     useEffect(() => {
         // If we have template read permissions
