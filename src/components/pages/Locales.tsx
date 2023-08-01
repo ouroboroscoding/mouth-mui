@@ -83,7 +83,7 @@ export default function Locales(props: LocalesProps) {
 		return new Promise((resolve, reject) => {
 
 			// Create the new locale
-			mouth.create('locale').then((data: string) => {
+			mouth.create('locale', locale).then((data: string) => {
 
 				// If we were successful
 				if(data) {

@@ -61,7 +61,7 @@ export default function Locales(props) {
         // Create a new Promise and return it
         return new Promise((resolve, reject) => {
             // Create the new locale
-            mouth.create('locale').then((data) => {
+            mouth.create('locale', locale).then((data) => {
                 // If we were successful
                 if (data) {
                     // Notify the parent
