@@ -6,8 +6,8 @@
  * @author Chris Nasr <chris@ouroboroscoding.com>
  * @created 2023-01-23
  */
-/// <reference types="react" />
 import PropTypes from 'prop-types';
+import React from 'react';
 import { contentStruct } from '../..';
 import { responseErrorStruct } from '@ouroboros/body';
 export type PreviewProps = {
@@ -26,7 +26,7 @@ export type PreviewProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Preview(props: PreviewProps): JSX.Element;
+declare function Preview(props: PreviewProps): React.JSX.Element;
 declare namespace Preview {
     var propTypes: {
         mobile: PropTypes.Validator<boolean>;

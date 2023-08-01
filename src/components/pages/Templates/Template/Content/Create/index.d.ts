@@ -6,8 +6,8 @@
  * @author Chris Nasr <chris@ouroboroscoding.com>
  * @created 2023-01-22
  */
-/// <reference types="react" />
 import PropTypes from 'prop-types';
+import React from 'react';
 import { contentStruct } from '../../';
 import { responseErrorStruct } from '@ouroboros/body';
 export type TemplateContentCreateProps = {
@@ -27,7 +27,7 @@ export type TemplateContentCreateProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Create(props: TemplateContentCreateProps): JSX.Element;
+declare function Create(props: TemplateContentCreateProps): React.JSX.Element;
 declare namespace Create {
     var propTypes: {
         locales: PropTypes.Validator<{

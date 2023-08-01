@@ -6,8 +6,8 @@
  * @author Chris Nasr <chris@ouroboroscoding.com>
  * @created 2023-01-20
  */
-/// <reference types="react" />
 import PropTypes from 'prop-types';
+import React from 'react';
 export type VariablesProps = {
     onChange: (variables: Record<string, string>) => void;
     value: Record<string, string>;
@@ -22,7 +22,7 @@ export type VariablesProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Variables(props: VariablesProps): JSX.Element;
+declare function Variables(props: VariablesProps): React.JSX.Element;
 declare namespace Variables {
     var propTypes: {
         onChange: PropTypes.Validator<(...args: any[]) => any>;
