@@ -38,7 +38,7 @@ import Variables from './Variables';
 
 // Types
 import { responseErrorStruct } from '@ouroboros/body';
-import { rightsStruct } from '@ouroboros/brain-mui';
+import { rightsStruct } from '@ouroboros/brain-react';
 export type contentStruct = {
 	_id?: string,
 	_created?: number,

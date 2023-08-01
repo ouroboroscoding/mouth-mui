@@ -6,8 +6,8 @@
  * @author Chris Nasr <chris@ouroboroscoding.com>
  * @created 2023-01-22
  */
-/// <reference types="react" />
 import PropTypes from 'prop-types';
+import React from 'react';
 import { responseErrorStruct } from '@ouroboros/body';
 import { contentStruct } from '../..';
 export type updateStruct = Omit<contentStruct, 'type'>;
@@ -27,7 +27,7 @@ export type UpdateProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Update(props: UpdateProps): JSX.Element;
+declare function Update(props: UpdateProps): React.JSX.Element;
 declare namespace Update {
     var propTypes: {
         mobile: PropTypes.Validator<boolean>;

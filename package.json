@@ -1,6 +1,6 @@
 {
 	"name": "@ouroboros/mouth-mui",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "Components for use with the Mouth service",
 	"main": "src/index.js",
 	"types": "src/index.d.ts",
@@ -40,7 +40,7 @@
 		"@ouroboros/define-mui": "^1.0.3",
 		"@ouroboros/react-radiobuttons-mui": "^1.0.0",
 		"@ouroboros/subscribe": "^1.2.0",
-		"@ouroboros/tools": "^0.4.1",
+		"@ouroboros/tools": "^0.5.1",
 		"prop-types": "^15.8.1"
 	},
 	"peerDependencies": {
@@ -48,7 +48,7 @@
 		"@emotion/styled": "^11.8.1",
 		"@mui/material": "^5.5.1",
 		"@ouroboros/body": "^1.0.2",
-		"@ouroboros/brain-mui": "^1.1.0",
+		"@ouroboros/brain-react": "^1.0.0",
 		"@ouroboros/mouth": "^1.1.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2"
