@@ -22,7 +22,8 @@ export type Options = Record<string, Option[]>;
  * @extends Subscribe
  */
 declare class Locales extends Subscribe {
-    private running;
+    private failed;
+    private fetching;
     /**
      * Constructor
      *
@@ -59,12 +60,26 @@ declare class Locales extends Subscribe {
      */
     static objectSort(records: Record<string, Record<string, string>>): Options;
     /**
+     * Fetch
+     *
+     * Private method to fetch the locales from the server which loops if
+     * there's network issues
+     *
+     * @name fetch
+     * @access private
+     * @returns void
+     */
+    private fetch;
+    /**
      * Subscribe
      *
      * Override the subscribe method to initiate the fetching process
      *
      * @name subscribe
      * @access public
+     * @param callback The function to call when locales change
+     * @returns an object with the current available `data` and `unsubscribe`
+     * 			to remove the callback from the list when we're done
      */
     subscribe(callback: SubscribeCallback): SubscribeReturn;
 }
