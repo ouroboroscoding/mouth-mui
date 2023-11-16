@@ -1,6 +1,6 @@
 {
 	"name": "@ouroboros/mouth-mui",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "Components for use with the Mouth service",
 	"main": "src/index.js",
 	"types": "src/index.d.ts",
@@ -26,7 +26,6 @@
 		"url": "https://github.com/ouroboroscoding/mouth-mui/issues"
 	},
 	"devDependencies": {
-		"@ouroboros/body": "^1.0.2",
 		"@types/node": "^18.14.0",
 		"@types/react": "^18.0.28",
 		"@types/uuid": "^9.0.0",
@@ -47,9 +46,10 @@
 		"@emotion/react": "^11.8.2",
 		"@emotion/styled": "^11.8.1",
 		"@mui/material": "^5.5.1",
-		"@ouroboros/body": "^1.0.2",
-		"@ouroboros/brain-react": "^1.0.0",
-		"@ouroboros/mouth": "^1.1.0",
+		"@ouroboros/body": "^1.0.3",
+		"@ouroboros/brain-react": "^1.0.2",
+		"@ouroboros/events": "^1.0.1",
+		"@ouroboros/mouth": "^1.1.1",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2"
 	}

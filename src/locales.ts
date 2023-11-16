@@ -9,6 +9,7 @@
  */
 
 // Ouroboros modules
+import events from '@ouroboros/events';
 import Subscribe, { SubscribeCallback, SubscribeReturn } from '@ouroboros/subscribe';
 
 // Local modules
@@ -31,8 +32,11 @@ export type Options = Record<string, Option[]>;
  */
 class Locales extends Subscribe {
 
+	// Keep track of failed attempts
+	private failed: number;
+
 	// Keeps the state of if the rest request is taking place
-	private running: boolean;
+	private fetching: boolean;
 
 	/**
 	 * Constructor
@@ -49,7 +53,7 @@ class Locales extends Subscribe {
 		super([]);
 
 		// Init the running flag
-		this.running = false;
+		this.fetching = false;
 	}
 
 	/**
@@ -152,12 +156,70 @@ class Locales extends Subscribe {
 	}
 
 	/**
+	 * Fetch
+	 *
+	 * Private method to fetch the locales from the server which loops if
+	 * there's network issues
+	 *
+	 * @name fetch
+	 * @access private
+	 * @returns void
+	 */
+	private fetch(): void {
+
+		// Mark us as running
+		this.fetching = true;
+
+		// Fetch the data from the server
+		mouth.read('locales').then((list: any) => {
+
+			// If there's data
+			if(list) {
+
+				// Trigger all callbacks
+				this.set(list);
+			}
+
+			// Finish running
+			this.fetching = false;
+
+			// Reset the count
+			this.failed = 0;
+
+		}, error => {
+
+			// If we haven't hit the limit
+			if(this.failed < 3) {
+
+				// Increase the failed count
+				++this.failed;
+
+				// Fetch again
+				this.fetch();
+			}
+
+			// Else, we can't keep trying, notify the user
+			else {
+				events.get('error').trigger(error);
+			}
+
+		}).finally(() => {
+
+			// Regardless of the outcome, we're done fetching
+			this.fetching = false;
+		})
+	}
+
+	/**
 	 * Subscribe
 	 *
 	 * Override the subscribe method to initiate the fetching process
 	 *
 	 * @name subscribe
 	 * @access public
+	 * @param callback The function to call when locales change
+	 * @returns an object with the current available `data` and `unsubscribe`
+	 * 			to remove the callback from the list when we're done
 	 */
 	subscribe(callback: SubscribeCallback): SubscribeReturn {
 
@@ -165,24 +227,10 @@ class Locales extends Subscribe {
 		const oReturn = super.subscribe(callback);
 
 		// If we don't have a value yet and it's not running
-		if(oReturn.data.length === 0 && this.running === false) {
+		if(oReturn.data.length === 0 && this.fetching === false) {
 
-			// Mark us as running
-			this.running = true;
-
-			// Fetch the data from the server
-			mouth.read('locales').then((list: any) => {
-
-				// If there's data
-				if(list) {
-
-					// Trigger all callbacks
-					this.set(list);
-				}
-
-				// Finish running
-				this.running = false;
-			});
+			// Fetch the data
+			this.fetch();
 
 			// Overwrite the data
 			oReturn.data = [];
