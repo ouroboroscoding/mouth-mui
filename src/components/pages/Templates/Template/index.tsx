@@ -38,7 +38,7 @@ import Variables from './Variables';
 
 // Types
 import { responseErrorStruct } from '@ouroboros/body';
-import { rightsStruct } from '@ouroboros/brain-react';
+import { idStruct } from '@ouroboros/brain-react';
 export type contentStruct = {
 	_id?: string,
 	_created?: number,
@@ -66,8 +66,8 @@ export type TemplateProps = {
 	onError: (error: responseErrorStruct) => void,
 	onContent: (type: string) => void,
 	rights: {
-		template: rightsStruct,
-		content: rightsStruct
+		template: idStruct,
+		content: idStruct
 	},
 	value: templateStruct
 }
