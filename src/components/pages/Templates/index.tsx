@@ -9,9 +9,8 @@
 
 // Ouroboros modules
 import { useRights } from '@ouroboros/brain-react';
-import clone from '@ouroboros/clone';
 import mouth from '@ouroboros/mouth';
-import { afindi } from '@ouroboros/tools';
+import { arrayFindOverwrite } from '@ouroboros/tools';
 
 // NPM modules
 import PropTypes from 'prop-types';
@@ -29,7 +28,6 @@ import Template, { templateStruct } from './Template';
 // Types
 import { responseErrorStruct } from '@ouroboros/body';
 export type TemplatesProps = {
-	mobile: boolean,
 	onError: (error: responseErrorStruct) => void,
 	onSuccess: (type: string) => void
 }
@@ -44,12 +42,12 @@ export type TemplatesProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function Templates(props: TemplatesProps) {
+export default function Templates({ onError, onSuccess }: TemplatesProps) {
 
 	// State
-	const [create, createSet] = useState<boolean>(false);
-	const [locales, localesSet] = useState<Record<string, string>>({});
-	const [templates, templatesSet] = useState<templateStruct[]>([]);
+	const [ create, createSet ] = useState<boolean>(false);
+	const [ locales, localesSet ] = useState<Record<string, string>>({ });
+	const [ templates, templatesSet ] = useState<templateStruct[]>([ ]);
 
 	// Hooks
 	const rightsContent = useRights('mouth_content');
@@ -78,42 +76,34 @@ export default function Templates(props: TemplatesProps) {
 			createSet(false);
 		}
 
-	}, [rightsTemplate]);
+	}, [ rightsTemplate ]);
 
 	// Called when a template has been created
 	function templateCreated(template: templateStruct) {
 
 		// Notify parent
-		props.onSuccess('template_create');
+		onSuccess('template_create');
 
 		// Hide the create form
 		createSet(false);
 
 		// Clone the current templates, add the new one to the front, and set
 		//	the new templates
-		const lTemplates = clone(templates);
-		lTemplates.unshift(template);
-		templatesSet(lTemplates);
+		templatesSet(l => [ template, ...l ])
 	}
 
 	// Called when a template has been updated
 	function templateUpdated(template: templateStruct) {
 
 		// Notify parent
-		props.onSuccess('template_update');
+		onSuccess('template_update');
 
-		// Look for the template
-		const i = afindi(templates, '_id', template._id);
-
-		// If we have it
-		if(i > -1) {
-
-			// Clone the current templates, update the index, and set the new
-			//	templates
-			const lTemplates = clone(templates);
-			lTemplates[i] = template;
-			templatesSet(lTemplates);
-		}
+		// Work on latest
+		templatesSet(l =>
+			arrayFindOverwrite(
+				l, '_id', template._id, template, true
+			) as templateStruct[]
+		);
 	}
 
 	// Render
@@ -135,17 +125,16 @@ export default function Templates(props: TemplatesProps) {
 				<Create
 					onCancel={() => createSet(false)}
 					onCreated={templateCreated}
-					onError={props.onError}
+					onError={onError}
 				/>
 			}
 			{templates.map((o: templateStruct) =>
 				<Template
 					key={o._id}
 					locales={locales}
-					mobile={props.mobile}
 					onChange={templateUpdated}
-					onContent={type => props.onSuccess(`content_${type}`)}
-					onError={props.onError}
+					onContent={type => onSuccess(`content_${type}`)}
+					onError={onError}
 					rights={{
 						content: rightsContent,
 						template: rightsTemplate
@@ -159,7 +148,6 @@ export default function Templates(props: TemplatesProps) {
 
 // Valid props
 Templates.propTypes = {
-	mobile: PropTypes.bool.isRequired,
 	onError: PropTypes.func.isRequired,
 	onSuccess: PropTypes.func.isRequired
 }

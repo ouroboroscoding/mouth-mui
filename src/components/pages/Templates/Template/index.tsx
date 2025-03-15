@@ -8,12 +8,11 @@
  */
 
 // Ouroboros modules
-import clone from '@ouroboros/clone';
 import { Node } from '@ouroboros/define';
 import { DefineNode } from '@ouroboros/define-mui';
 import mouth, { errors } from '@ouroboros/mouth';
-import TemplateDef from '@ouroboros/mouth/definitions/template.json';
-import { afindi, omap, ucfirst } from '@ouroboros/tools';
+import TemplateDef from '@ouroboros/mouth/define/template.json';
+import { arrayFindMerge, omap, ucfirst } from '@ouroboros/tools';
 
 // NPM modules
 import PropTypes from 'prop-types';
@@ -61,7 +60,6 @@ export type templateStruct = {
 export type typeOption = 'email' | 'sms';
 export type TemplateProps = {
 	locales: Record<string, string>,
-	mobile: boolean,
 	onChange: (template: templateStruct) => void,
 	onError: (error: responseErrorStruct) => void,
 	onContent: (type: string) => void,
@@ -85,62 +83,46 @@ const oNameNode = new Node(TemplateDef.name);
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function Template(props: TemplateProps) {
+export default function Template(
+	{ locales, onChange, onError, onContent, rights, value }: TemplateProps
+) {
 
 	// State
-	const [contents, contentsSet] = useState<contentStruct[] | false>(false);
-	const [tab, tabSet] = useState<number>(0);
-	const [edit, editSet] = useState<templateStruct | false>(false);
-	const [view, viewSet] = useState<boolean>(false);
+	const [ contents, contentsSet ] = useState<contentStruct[] | false>(false);
+	const [ tab, tabSet ] = useState<number>(0);
+	const [ edit, editSet ] = useState<templateStruct | false>(false);
+	const [ view, viewSet ] = useState<boolean>(false);
 
 	// Refs
 	const refName = useRef<DefineNode>(null);
 
 	// Called when the update record changes
-	function change(field: string, value: any) {
+	function change(field: string, val: any) {
 
 		// Set the new record
-		editSet(o => {
-			const oRecord = clone(o);
-			oRecord[field] = value;
-			return oRecord;
-		});
+		editSet(o => { return { ...o as templateStruct, [field]: val } });
 	}
 
 	// Called when a single conent record is created
 	function contentCreated(content: contentStruct) {
 
 		// Notify the parent
-		props.onContent('create');
+		onContent('create');
 
-		// Clone the current contents
-		const lContents = clone(contents);
-
-		// Add the new record to the end of the array
-		lContents.push(content);
-
-		// Set the new contents
-		contentsSet(lContents);
+		// Add it to the end
+		contentsSet(l => [ ...l as contentStruct[], content ]);
 	}
 
 	// Called when a single content record is updated
 	function contentUpdated(content: contentStruct) {
 
 		// Notify the parent
-		props.onContent('update');
+		onContent('update');
 
-		// Find the index of the record
-		const i = afindi(contents as contentStruct[], '_id', content._id);
-
-		// If we got an index
-		if(i > -1) {
-
-			// Clone the current contents, merge the current record with the
-			//	new one, and set the new contents
-			const lContents = clone(contents);
-			lContents[i] = {...lContents[i], ...content};
-			contentsSet(lContents);
-		}
+		// Work on latest
+		contentsSet(l => arrayFindMerge(
+			l as contentStruct[], '_id', content._id, content, true
+		) as contentStruct[]);
 	}
 
 	// Called to delete the template
@@ -158,7 +140,7 @@ export default function Template(props: TemplateProps) {
 			editSet(false);
 
 			// Let the parent know
-			props.onChange(edit as templateStruct);
+			onChange(edit as templateStruct);
 
 		}, (error: responseErrorStruct) => {
 			if(error.code === errors.body.DB_DUPLICATE) {
@@ -176,7 +158,7 @@ export default function Template(props: TemplateProps) {
 		} else {
 			if(contents === false) {
 				mouth.read('template/contents', {
-					template: props.value._id
+					template: value._id
 				}).then(contentsSet);
 			}
 			viewSet(true);
@@ -189,19 +171,19 @@ export default function Template(props: TemplateProps) {
 			<Box className="flexColumns">
 				<Box className="flexGrow link" onClick={viewToggle}>
 					<h2>
-						{ucfirst(props.value.name.replace(/_/g, ' '))}&nbsp;&nbsp;
+						{ucfirst(value.name.replace(/_/g, ' '))}&nbsp;&nbsp;
 						<i className={'fa-solid fa-angle-' + (view ? 'up' : 'down')} />
 					</h2>
 				</Box>
 				<Box className="flexStatic">
-					{props.rights.template.update &&
+					{rights.template.update &&
 						<Tooltip title="Edit the Template">
-							<IconButton className="icon" onClick={ev => editSet(edit ? false : clone(props.value))}>
+							<IconButton className="icon" onClick={ev => editSet(edit ? false : { ...value })}>
 								<i className={'fa-solid fa-edit ' + (edit ? 'open' : 'closed')} />
 							</IconButton>
 						</Tooltip>
 					}
-					{props.rights.template.delete &&
+					{rights.template.delete &&
 						<Tooltip title="Delete the Template">
 							<IconButton className="icon" onClick={remove}>
 								<i className="fa-solid fa-trash-alt" />
@@ -221,7 +203,7 @@ export default function Template(props: TemplateProps) {
 								label="none"
 								name="name"
 								node={oNameNode}
-								onChange={value => change('name', value)}
+								onChange={val => change('name', val)}
 								onEnterPressed={update}
 								ref={refName}
 								type="update"
@@ -231,7 +213,7 @@ export default function Template(props: TemplateProps) {
 						<Grid item lg={6} md={12}>
 							<Typography><strong>Variables</strong></Typography>
 							<Variables
-								onChange={value => change('variables', value)}
+								onChange={val => change('variables', val)}
 								value={edit.variables || {}}
 							/>
 						</Grid>
@@ -254,9 +236,9 @@ export default function Template(props: TemplateProps) {
 								value={tab}
 							>
 								{contents && contents.map(o =>
-									<Tab key={o._id} label={props.locales[o.locale] + ' ' + o.type} />
+									<Tab key={o._id} label={locales[o.locale] + ' ' + o.type} />
 								)}
-								{props.rights.content.create &&
+								{rights.content.create &&
 									<Tab label={
 										<i className="fa-solid fa-plus" />
 									} />
@@ -265,37 +247,34 @@ export default function Template(props: TemplateProps) {
 							<Box className="padding">
 								<br />
 								{(contents && tab < contents.length &&
-									(props.rights.content.update ?
+									(rights.content.update ?
 										<ContentUpdate
 											key={contents[tab]._id}
-											mobile={props.mobile}
-											onError={props.onError}
+											onError={onError}
 											onUpdated={contentUpdated}
 											value={contents[tab]}
 										/>
 									:
 										<ContentView
 											key={contents[tab]._id}
-											mobile={props.mobile}
-											onError={props.onError}
+											onError={onError}
 											value={contents[tab]}
 										/>
 									)
 								) ||
-								((props.rights.content.create && contents && tab === contents.length) &&
+								((rights.content.create && contents && tab === contents.length) &&
 									<ContentCreate
-										locales={props.locales}
-										mobile={props.mobile}
+										locales={locales}
 										onCreated={contentCreated}
-										onError={props.onError}
-										template={props.value._id as string}
+										onError={onError}
+										template={value._id as string}
 									/>
 								)}
 							</Box>
 						</Grid>
 						<Grid item xs={12} md={3} xl={2}>
 							<h4>Available Variables</h4>
-							{props.value && omap(props.value.variables, (v,k) =>
+							{value && omap(value.variables, (v,k) =>
 								<Typography key={k}>{'{' + k + '}'}</Typography>
 							)}
 						</Grid>
@@ -309,7 +288,6 @@ export default function Template(props: TemplateProps) {
 // Valid props
 Template.propTypes = {
 	locales: PropTypes.objectOf(PropTypes.string).isRequired,
-	mobile: PropTypes.bool.isRequired,
 	onChange: PropTypes.func.isRequired,
 	onError: PropTypes.func.isRequired,
 	onContent: PropTypes.func.isRequired,

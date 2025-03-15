@@ -24,7 +24,7 @@ export type SMSProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function SMS(props: SMSProps): React.JSX.Element;
+declare function SMS({ errors, onChanged, value }: SMSProps): React.JSX.Element;
 declare namespace SMS {
     var propTypes: {
         errors: PropTypes.Validator<object>;

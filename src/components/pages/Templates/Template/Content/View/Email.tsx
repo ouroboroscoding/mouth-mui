@@ -18,7 +18,6 @@ import Typography from '@mui/material/Typography';
 // Types
 import { contentStruct } from '../../';
 export type EmailProps = {
-	mobile: boolean,
 	value: contentStruct
 }
 
@@ -32,7 +31,7 @@ export type EmailProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function Email(props: EmailProps) {
+export default function Email({ value }: EmailProps) {
 
 	// Render
 	return (
@@ -41,22 +40,22 @@ export default function Email(props: EmailProps) {
 				<Typography><strong>Subject</strong></Typography>
 			</Grid>
 			<Grid item xs={12} md={8} lg={10} xl={11}>
-				{props.value.subject}
+				{value.subject}
 			</Grid>
 			<Grid item xs={12} md={4} lg={2} xl={1}>
 				<Typography><strong>Text</strong></Typography>
 			</Grid>
 			<Grid item xs={12} md={8} lg={10} xl={11}>
-				{props.value.text &&
-					<Typography style={{whiteSpace: 'pre-wrap'}}>{props.value.text}</Typography>
+				{value.text &&
+					<Typography style={{whiteSpace: 'pre-wrap'}}>{value.text}</Typography>
 				}
 			</Grid>
 			<Grid item xs={12} md={4} lg={2} xl={1}>
 				<Typography><strong>HTML</strong></Typography>
 			</Grid>
 			<Grid item xs={12} md={8} lg={10} xl={11}>
-				{props.value.html &&
-					<Typography style={{whiteSpace: 'pre-wrap'}}>{props.value.html}</Typography>
+				{value.html &&
+					<Typography style={{whiteSpace: 'pre-wrap'}}>{value.html}</Typography>
 				}
 			</Grid>
 		</Grid>
@@ -65,7 +64,6 @@ export default function Email(props: EmailProps) {
 
 // Valid props
 Email.propTypes = {
-	mobile: PropTypes.bool.isRequired,
 	value: PropTypes.exact({
 		_id: PropTypes.string.isRequired,
 		_created: PropTypes.number,

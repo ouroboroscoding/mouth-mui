@@ -8,7 +8,6 @@
  */
 
 // Ouroboros modules
-import clone from '@ouroboros/clone';
 import { errorTree } from '@ouroboros/define-mui';
 import mouth, { errors } from '@ouroboros/mouth';
 import { owithout } from '@ouroboros/tools';
@@ -31,7 +30,6 @@ import { responseErrorStruct } from '@ouroboros/body';
 import { contentStruct } from '../..';
 export type updateStruct = Omit<contentStruct, 'type'>;
 export type UpdateProps = {
-	mobile: boolean,
 	onError: (error: responseErrorStruct) => void,
 	onUpdated: (content: contentStruct) => void,
 	value: contentStruct
@@ -47,19 +45,19 @@ export type UpdateProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function Update(props: UpdateProps) {
+export default function Update({ onError, onUpdated, value }: UpdateProps) {
 
 	// State
-	const [fieldErrors, fieldErrorsSet] = useState<Record<string, string>>({});
-	const [preview, previewSet] = useState<contentStruct | boolean>(false);
-	const [record, recordSet] = useState<updateStruct>(owithout(props.value, 'type') as updateStruct);
+	const [ fieldErrors, fieldErrorsSet ] = useState<Record<string, string>>({});
+	const [ preview, previewSet ] = useState<contentStruct | boolean>(false);
+	const [ record, recordSet ] = useState<updateStruct>(owithout(value, 'type') as updateStruct);
 
 	// Called to create the new content record
 	function update() {
 
 		// Send the record data to the server
-		mouth.update(`template/${props.value.type}`, record).then(() => {
-			props.onUpdated({type: props.value.type, ...record});
+		mouth.update(`template/${value.type}`, record).then(() => {
+			onUpdated({type: value.type, ...record});
 		}, (error: responseErrorStruct) => {
 			if(error.code === errors.body.DATA_FIELDS) {
 				fieldErrorsSet(errorTree(error.msg));
@@ -81,68 +79,61 @@ export default function Update(props: UpdateProps) {
 				}
 
 				// Show the errors
-				if(props.onError) {
-					props.onError({ code: 0, msg: lLines.join('\n') });
+				if(onError) {
+					onError({ code: 0, msg: lLines.join('\n') });
 				}
 			} else {
-				props.onError(error);
+				onError(error);
 			}
 		});
 	}
 
 	// Called when any fields in the record are changed
-	function recordChanged(field: string, value: any) {
+	function recordChanged(field: string, val: any) {
 
 		// Clear error
 		if(field in fieldErrors) {
 			delete fieldErrors.field;
 		}
 
-		// Clone the record
-		const oRecord = clone(record);
-
-		// Update the field
-		oRecord[field] = value;
-
-		// Store the new record
-		recordSet(oRecord);
+		// Set the new record
+		recordSet(o => { return { ...o, [field]: val } });
 	}
 
 	// Render
 	return (
 		<Box className="content_update">
-			{(props.value.type === 'email' &&
+			{(value.type === 'email' &&
 				<Email
 					errors={fieldErrors}
-					key={props.value._id}
+					key={value._id}
 					onChanged={recordChanged}
 					value={record}
 				/>
-			) || (props.value.type === 'sms' &&
+			) || (value.type === 'sms' &&
 				<SMS
 					errors={fieldErrors}
-					key={props.value._id}
+					key={value._id}
 					onChanged={recordChanged}
 					value={record}
 				/>
 			)}
 			<Box className="actions">
-				<Button color="secondary" onClick={() => recordSet(owithout(props.value, 'type') as updateStruct)} variant="contained">Cancel</Button>
+				<Button color="secondary" onClick={() => recordSet(owithout(value, 'type') as updateStruct)} variant="contained">Cancel</Button>
 				<Button color="info" onClick={() => previewSet(true)} variant="contained">Preview</Button>
 				<Button color="primary" onClick={update} variant="contained">Save Content</Button>
 				{preview &&
 					<Preview
-						mobile={props.mobile}
 						onClose={() => previewSet(false)}
 						onError={(error: responseErrorStruct) => {
 							if(error.code === errors.body.DATA_FIELDS) {
 								fieldErrorsSet(errorTree(error.msg));
 							} else {
-								props.onError(error);
+								onError(error);
 							}
 							previewSet(false);
 						}}
-						value={{...record, type: props.value.type}}
+						value={{ ...record, type: value.type }}
 					/>
 				}
 			</Box>
@@ -152,7 +143,6 @@ export default function Update(props: UpdateProps) {
 
 // Valid props
 Update.propTypes = {
-	mobile: PropTypes.bool.isRequired,
 	onError: PropTypes.func.isRequired,
 	onUpdated: PropTypes.func.isRequired,
 	value: PropTypes.shape({

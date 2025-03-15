@@ -11,7 +11,6 @@ import React from 'react';
 import { contentStruct } from '../..';
 import { responseErrorStruct } from '@ouroboros/body';
 export type PreviewProps = {
-    mobile: boolean;
     onClose: () => void;
     onError: (error: responseErrorStruct) => void;
     value: contentStruct;
@@ -26,10 +25,9 @@ export type PreviewProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Preview(props: PreviewProps): React.JSX.Element;
+declare function Preview({ onClose, onError, value }: PreviewProps): React.JSX.Element;
 declare namespace Preview {
     var propTypes: {
-        mobile: PropTypes.Validator<boolean>;
         onClose: PropTypes.Validator<(...args: any[]) => any>;
         onError: PropTypes.Validator<(...args: any[]) => any>;
         value: PropTypes.Requireable<PropTypes.InferProps<{

@@ -15,13 +15,8 @@ import React from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
-// UI Shared components
-//import FreeText from 'ui-shared/components/elements/FreeText';
-//<FreeText content={props.value} />
-
 // Type
 export type SMSProps = {
-	mobile: boolean
 	value: string
 }
 
@@ -35,7 +30,7 @@ export type SMSProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function SMS(props: SMSProps) {
+export default function SMS({ value }: SMSProps) {
 
 	// Render
 	return (
@@ -44,8 +39,8 @@ export default function SMS(props: SMSProps) {
 				<Typography><strong>Content</strong></Typography>
 			</Grid>
 			<Grid item xs={12} md={8} lg={10} xl={11}>
-				{props.value &&
-					<Typography style={{whiteSpace: 'pre-wrap'}}>{props.value}</Typography>
+				{value &&
+					<Typography style={{whiteSpace: 'pre-wrap'}}>{value}</Typography>
 				}
 			</Grid>
 		</Grid>
@@ -54,6 +49,5 @@ export default function SMS(props: SMSProps) {
 
 // Valid props
 SMS.propTypes = {
-	mobile: PropTypes.bool.isRequired,
 	value: PropTypes.string.isRequired
 }

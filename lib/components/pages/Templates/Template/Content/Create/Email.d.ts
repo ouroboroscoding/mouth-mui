@@ -24,7 +24,7 @@ export type EmailProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Email(props: EmailProps): React.JSX.Element;
+declare function Email({ errors, onChanged, value }: EmailProps): React.JSX.Element;
 declare namespace Email {
     var propTypes: {
         errors: PropTypes.Validator<object>;
