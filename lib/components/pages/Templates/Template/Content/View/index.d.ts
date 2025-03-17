@@ -11,7 +11,6 @@ import React from 'react';
 import { responseErrorStruct } from '@ouroboros/body';
 import { contentStruct } from '../..';
 export type ViewProps = {
-    mobile: boolean;
     onError: (error: responseErrorStruct) => void;
     value: contentStruct;
 };
@@ -25,10 +24,9 @@ export type ViewProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function View(props: ViewProps): React.JSX.Element;
+declare function View({ onError, value }: ViewProps): React.JSX.Element;
 declare namespace View {
     var propTypes: {
-        mobile: PropTypes.Validator<boolean>;
         onError: PropTypes.Validator<(...args: any[]) => any>;
         value: PropTypes.Requireable<PropTypes.InferProps<{
             _id: PropTypes.Validator<string>;

@@ -8,9 +8,7 @@
  */
 
 // Ouroboros modules
-import { Node } from '@ouroboros/define';
 import { DefineNode } from '@ouroboros/define-mui';
-import TemplateSMS from '@ouroboros/mouth/definitions/template_sms.json';
 
 // NPM modules
 import PropTypes from 'prop-types';
@@ -19,8 +17,8 @@ import React from 'react';
 // Material UI
 import Box from '@mui/material/Box';
 
-// Record Nodes
-const oContentNode = new Node(TemplateSMS.content);
+// Import the shared types
+import { SmsTree } from '../../../../../../shared';
 
 // Types
 import { contentStruct } from '../../';
@@ -40,19 +38,19 @@ export type SMSProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function SMS(props: SMSProps) {
+export default function SMS({ errors, onChanged, value }: SMSProps) {
 
 	// Render
 	return (
 		<Box className="content_create_sms field">
 			<DefineNode
-				error={props.errors.content || false}
+				error={errors.content || false}
 				label="placeholder"
 				name="content"
-				node={oContentNode}
-				onChange={val => props.onChanged('content', val)}
+				node={SmsTree.get('content') as any}
+				onChange={val => onChanged('content', val)}
 				type="create"
-				value={props.value.content}
+				value={value.content}
 			/>
 		</Box>
 	);

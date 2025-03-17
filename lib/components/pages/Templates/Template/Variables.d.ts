@@ -22,7 +22,7 @@ export type VariablesProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Variables(props: VariablesProps): React.JSX.Element;
+declare function Variables({ onChange, value }: VariablesProps): React.JSX.Element;
 declare namespace Variables {
     var propTypes: {
         onChange: PropTypes.Validator<(...args: any[]) => any>;

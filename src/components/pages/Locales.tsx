@@ -9,11 +9,10 @@
 
 // Ouroboros modules
 import { useRights } from '@ouroboros/brain-react';
-import clone from '@ouroboros/clone';
 import { Tree } from '@ouroboros/define'
 import { Form, Results } from '@ouroboros/define-mui';
 import mouth, { errors } from '@ouroboros/mouth';
-import LocaleDef from '@ouroboros/mouth/definitions/locale.json';
+import LocaleDef from '@ouroboros/mouth/define/locale.json';
 import { afindi, merge } from '@ouroboros/tools';
 
 // NPM modules
@@ -30,12 +29,21 @@ import Tooltip from '@mui/material/Tooltip';
 import locales from '../../locales';
 
 // Generate the user Tree
-const LocaleTree = new Tree(LocaleDef);
+const LocaleTree = new Tree(LocaleDef, {
+	__name__: 'record',
+	__ui__: {
+		__copyPrimary__: false,
+		__create__: [ '_id', 'name' ],
+		__results__: [ '_id', 'name' ],
+		__update__: [ 'name' ]
+	},
+
+	_id: { __ui__: { __title__: 'ISO-639 - ISO-3166' } }
+});
 
 // Types
 import { responseErrorStruct } from '@ouroboros/body';
 export type LocalesProps = {
-	mobile: boolean,
 	onError: (error: responseErrorStruct) => void,
 	onSuccess: (type: string) => void
 }
@@ -50,11 +58,11 @@ export type LocalesProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function Locales(props: LocalesProps) {
+export default function Locales({ onError, onSuccess }: LocalesProps) {
 
 	// State
-	const [create, createSet] = useState<boolean>(false);
-	const [records, recordsSet] = useState<any[]>([]);
+	const [ create, createSet ] = useState<boolean>(false);
+	const [ records, recordsSet ] = useState<any[]>([ ]);
 
 	// Hooks
 	const rights = useRights('mouth_locale');
@@ -89,15 +97,14 @@ export default function Locales(props: LocalesProps) {
 				if(data) {
 
 					// Notify the parent
-					props.onSuccess('create');
+					onSuccess('create');
 
 					// Close the create form
 					createSet(false);
 
-					// Clone the records, add the new one to the start, and set the new
-					//	records
-					const lRecords = clone(records);
-					lRecords.unshift(locale);
+					// Clone the records, add the new one to the start, and set
+					//	the new records
+					const lRecords = [ locale, ...records ];
 					recordsSet(lRecords);
 
 					// Send the clone to the locales
@@ -113,8 +120,8 @@ export default function Locales(props: LocalesProps) {
 				} else if(error.code === errors.body.DATA_FIELDS) {
 					reject(error.msg);
 				} else {
-					if(props.onError) {
-						props.onError(error);
+					if(onError) {
+						onError(error);
 					} else {
 						throw new Error(JSON.stringify(error));
 					}
@@ -133,7 +140,7 @@ export default function Locales(props: LocalesProps) {
 			if(data) {
 
 				// Notify the parent
-				props.onSuccess('delete');
+				onSuccess('delete');
 
 				// Look for the record
 				const i = afindi(records, '_id', key);
@@ -141,8 +148,9 @@ export default function Locales(props: LocalesProps) {
 				// If it exists
 				if(i > -1) {
 
-					// Clone the records, delete the index, and set the new records
-					const lRecords = clone(records);
+					// Clone the records, delete the index, and set the new
+					//	records
+					const lRecords = [ ...records ];
 					lRecords.splice(i, 1);
 					recordsSet(lRecords);
 
@@ -151,8 +159,8 @@ export default function Locales(props: LocalesProps) {
 				}
 			}
 		}, (error: responseErrorStruct) => {
-			if(props.onError) {
-				props.onError(error);
+			if(onError) {
+				onError(error);
 			} else {
 				throw new Error(JSON.stringify(error));
 			}
@@ -175,7 +183,7 @@ export default function Locales(props: LocalesProps) {
 				if(data) {
 
 					// Notify the parent
-					props.onSuccess('update');
+					onSuccess('update');
 
 					// Look for the record
 					const i = afindi(records, '_id', key);
@@ -183,8 +191,9 @@ export default function Locales(props: LocalesProps) {
 					// If it exists
 					if(i > -1) {
 
-						// Clone the records, update the index, and set the new records
-						const lRecords = clone(records);
+						// Clone the records, update the index, and set the new
+						//	records
+						const lRecords = [ ...records ];
 						merge(lRecords[i], locale);
 						recordsSet(lRecords);
 
@@ -200,8 +209,8 @@ export default function Locales(props: LocalesProps) {
 				if(error.code === errors.body.DATA_FIELDS) {
 					reject(error.msg);
 				} else {
-					if(props.onError) {
-						props.onError(error);
+					if(onError) {
+						onError(error);
 					} else {
 						throw new Error(JSON.stringify(error));
 					}
@@ -217,9 +226,14 @@ export default function Locales(props: LocalesProps) {
 				<h1 className="flexGrow">Locales</h1>
 				{rights.create &&
 					<Box className="flexStatic">
-						<Tooltip title="Create new Locale" className="page_action" onClick={() => createSet(b => !b)}>
+						<Tooltip
+							title="Create new Locale"
+							className="page_action"
+							onClick={() => createSet(b => !b)}
+						>
 							<IconButton>
-								<i className={'fa-solid fa-plus' + (create ? ' open' : '')} />
+								<i className={'fa-solid fa-plus' +
+									(create ? ' open' : '')} />
 							</IconButton>
 						</Tooltip>
 					</Box>
@@ -248,7 +262,6 @@ export default function Locales(props: LocalesProps) {
 
 // Valid props
 Locales.propTypes = {
-	mobile: PropTypes.bool.isRequired,
 	onError: PropTypes.func.isRequired,
 	onSuccess: PropTypes.func.isRequired
 }

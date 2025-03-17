@@ -8,11 +8,10 @@
  */
 
 // Ouroboros modules
-import clone from '@ouroboros/clone';
 import { Node } from '@ouroboros/define';
 import { DefineNode } from '@ouroboros/define-mui';
 import mouth, { errors } from '@ouroboros/mouth';
-import TemplateDef from '@ouroboros/mouth/definitions/template.json';
+import TemplateDef from '@ouroboros/mouth/define/template.json';
 
 // NPM modules
 import PropTypes from 'prop-types';
@@ -49,10 +48,10 @@ export interface CreateProps {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function Create(props: CreateProps) {
+export default function Create({ onCancel, onCreated, onError }: CreateProps) {
 
 	// State
-	const [record, recordSet] = useState<templateStruct>({
+	const [ record, recordSet ] = useState<templateStruct>({
 		name: '',
 		variables: {}
 	});
@@ -61,13 +60,11 @@ export default function Create(props: CreateProps) {
 	const refName = useRef<DefineNode>(null);
 
 	// Called when record changes
-	function change(field: string, value: any) {
+	function change(field: string, val: any) {
 
 		// Set the new record
 		recordSet((o: templateStruct) => {
-			const oRecord = clone(o);
-			oRecord[field] = value;
-			return oRecord;
+			return { ...o, [field]: val }
 		});
 	}
 
@@ -81,13 +78,13 @@ export default function Create(props: CreateProps) {
 			record._id = data;
 
 			// Let the parent know
-			props.onCreated(clone(record));
+			onCreated({ ...record });
 		}, (error: responseErrorStruct) => {
 			if(error.code === errors.body.DB_DUPLICATE) {
 				refName.current?.error('Duplicate');
 			} else {
-				if(props.onError) {
-					props.onError(error);
+				if(onError) {
+					onError(error);
 				} else {
 					throw new Error(JSON.stringify(error));
 				}
@@ -106,7 +103,7 @@ export default function Create(props: CreateProps) {
 						label="none"
 						name="name"
 						node={oNameNode}
-						onChange={value => change('name', value)}
+						onChange={val => change('name', val)}
 						onEnterPressed={create}
 						ref={refName}
 						type="create"
@@ -116,13 +113,13 @@ export default function Create(props: CreateProps) {
 				<Grid item lg={6} md={12}>
 					<Typography><strong>Variables</strong></Typography>
 					<Variables
-						onChange={value => change('variables', value)}
+						onChange={val => change('variables', val)}
 						value={record.variables || {}}
 					/>
 				</Grid>
 				<Grid item xs={12} className="actions">
-					{props.onCancel &&
-						<Button variant="contained" color="secondary" onClick={props.onCancel}>Cancel</Button>
+					{onCancel &&
+						<Button variant="contained" color="secondary" onClick={onCancel}>Cancel</Button>
 					}
 					<Button variant="contained" color="primary" onClick={create}>Create Template</Button>
 				</Grid>

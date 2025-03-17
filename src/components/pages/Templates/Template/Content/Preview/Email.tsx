@@ -17,12 +17,11 @@ import Typography from '@mui/material/Typography';
 
 // UI Shared components
 //import FreeText from 'ui-shared/components/elements/FreeText';
-//<FreeText content={props.value.text} />
+//<FreeText content={value.text} />
 
 // Types
 import { contentStruct } from '../..';
 export type EmailProps = {
-	mobile: boolean,
 	value: contentStruct
 }
 
@@ -36,7 +35,7 @@ export type EmailProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function Email(props: EmailProps) {
+export default function Email({ value }: EmailProps) {
 
 	// Render
 	return (
@@ -45,22 +44,22 @@ export default function Email(props: EmailProps) {
 				<Typography><strong>Subject</strong></Typography>
 			</Grid>
 			<Grid item xs={12} md={8} lg={10} xl={11}>
-				{props.value.subject}
+				{value.subject}
 			</Grid>
 			<Grid item xs={12} md={4} lg={2} xl={1}>
 				<Typography><strong>Text</strong></Typography>
 			</Grid>
 			<Grid item xs={12} md={8} lg={10} xl={11}>
-				{props.value.text &&
-					<Typography style={{whiteSpace: 'pre-wrap'}}>{props.value.text}</Typography>
+				{value.text &&
+					<Typography style={{whiteSpace: 'pre-wrap'}}>{value.text}</Typography>
 				}
 			</Grid>
 			<Grid item xs={12} md={4} lg={2} xl={1}>
 				<Typography><strong>HTML</strong></Typography>
 			</Grid>
 			<Grid item xs={12} md={8} lg={10} xl={11}>
-				{props.value.html &&
-					<div dangerouslySetInnerHTML={{__html: props.value.html}} />
+				{value.html &&
+					<div dangerouslySetInnerHTML={{__html: value.html}} />
 				}
 			</Grid>
 		</Grid>
@@ -69,7 +68,6 @@ export default function Email(props: EmailProps) {
 
 // Valid props
 Email.propTypes = {
-	mobile: PropTypes.bool.isRequired,
 	value: PropTypes.shape({
 		subject: PropTypes.string,
 		text: PropTypes.string,

@@ -29,7 +29,6 @@ import SMS from './SMS';
 import { contentStruct } from '../..';
 import { responseErrorStruct } from '@ouroboros/body';
 export type PreviewProps = {
-	mobile: boolean,
 	onClose: () => void,
 	onError: (error: responseErrorStruct) => void,
 	value: contentStruct
@@ -45,13 +44,10 @@ export type PreviewProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function Preview(props: PreviewProps) {
-
-	// Props
-	const { mobile, onClose, onError, value } = props;
+export default function Preview({ onClose, onError, value }: PreviewProps) {
 
 	// State
-	const [preview, previewSet] = useState<contentStruct | string | false>(false);
+	const [ preview, previewSet ] = useState<contentStruct | string | false>(false);
 
 	// Value effect
 	useEffect(() => {
@@ -78,14 +74,12 @@ export default function Preview(props: PreviewProps) {
 					value.type === 'email' &&
 						<Email
 							key={value.template + '_' + value.locale + '_email'}
-							mobile={mobile}
 							value={preview as contentStruct}
 						/>
 				) || (
 					value.type === 'sms' &&
 						<SMS
 							key={value.template + '_' + value.locale + '_sms'}
-							mobile={mobile}
 							value={preview as string}
 						/>
 				)}
@@ -96,7 +90,6 @@ export default function Preview(props: PreviewProps) {
 
 // Valid props
 Preview.propTypes = {
-	mobile: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
 	onError: PropTypes.func.isRequired,
 	value: PropTypes.shape({

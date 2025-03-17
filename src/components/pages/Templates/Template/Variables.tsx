@@ -8,7 +8,6 @@
  */
 
 // Ouroboros modules
-import clone from '@ouroboros/clone';
 import { Node } from '@ouroboros/define';
 import { DefineNode } from '@ouroboros/define-mui';
 import { omap } from '@ouroboros/tools';
@@ -46,7 +45,7 @@ export type VariablesProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function Variables(props: VariablesProps) {
+export default function Variables({ onChange, value }: VariablesProps) {
 
 	// Refs
 	const refName = useRef<DefineNode>(null);
@@ -56,7 +55,7 @@ export default function Variables(props: VariablesProps) {
 	function add() {
 
 		// Clone the current value
-		const oValue: Record<string, string> = clone(props.value);
+		const oValue: Record<string, string> = { ...value };
 
 		// If we have references to the inputs
 		if(refName.current && refValue.current) {
@@ -70,14 +69,14 @@ export default function Variables(props: VariablesProps) {
 		}
 
 		// Let the parent know
-		props.onChange(oValue);
+		onChange(oValue);
 	}
 
 	// Called when an existing variables needs to be removed
 	function remove(name: string) {
 
 		// Clone the current value
-		const oValue = clone(props.value);
+		const oValue = { ...value };
 
 		// Delete the given key if it exists
 		if(name in oValue) {
@@ -85,14 +84,14 @@ export default function Variables(props: VariablesProps) {
 		}
 
 		// Let the parent know
-		props.onChange(oValue);
+		onChange(oValue);
 	}
 
 	// Render
 	return (
 		<Box>
 			<Grid container spacing={1}>
-				{omap(props.value, (v,k) =>
+				{omap(value, (v,k) =>
 					<React.Fragment key={k}>
 						<Grid item xs={5}>{k}</Grid>
 						<Grid item xs={5}>{v}</Grid>
