@@ -32,7 +32,6 @@ export type templateStruct = {
 export type typeOption = 'email' | 'sms';
 export type TemplateProps = {
     locales: Record<string, string>;
-    mobile: boolean;
     onChange: (template: templateStruct) => void;
     onError: (error: responseErrorStruct) => void;
     onContent: (type: string) => void;
@@ -52,13 +51,12 @@ export type TemplateProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Template(props: TemplateProps): React.JSX.Element;
+declare function Template({ locales, onChange, onError, onContent, rights, value }: TemplateProps): React.JSX.Element;
 declare namespace Template {
     var propTypes: {
         locales: PropTypes.Validator<{
             [x: string]: string | null | undefined;
         }>;
-        mobile: PropTypes.Validator<boolean>;
         onChange: PropTypes.Validator<(...args: any[]) => any>;
         onError: PropTypes.Validator<(...args: any[]) => any>;
         onContent: PropTypes.Validator<(...args: any[]) => any>;

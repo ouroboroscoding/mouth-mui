@@ -12,7 +12,6 @@ import { responseErrorStruct } from '@ouroboros/body';
 import { contentStruct } from '../..';
 export type updateStruct = Omit<contentStruct, 'type'>;
 export type UpdateProps = {
-    mobile: boolean;
     onError: (error: responseErrorStruct) => void;
     onUpdated: (content: contentStruct) => void;
     value: contentStruct;
@@ -27,10 +26,9 @@ export type UpdateProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Update(props: UpdateProps): React.JSX.Element;
+declare function Update({ onError, onUpdated, value }: UpdateProps): React.JSX.Element;
 declare namespace Update {
     var propTypes: {
-        mobile: PropTypes.Validator<boolean>;
         onError: PropTypes.Validator<(...args: any[]) => any>;
         onUpdated: PropTypes.Validator<(...args: any[]) => any>;
         value: PropTypes.Requireable<PropTypes.InferProps<{

@@ -8,7 +8,6 @@
  */
 
 // Ouroboros modules
-import clone from '@ouroboros/clone';
 import { errorTree } from '@ouroboros/define-mui';
 import mouth, { errors } from '@ouroboros/mouth';
 import RadioButtons from '@ouroboros/react-radiobuttons-mui';
@@ -36,7 +35,6 @@ import { contentStruct, typeOption } from '../../';
 import { responseErrorStruct } from '@ouroboros/body';
 export type TemplateContentCreateProps = {
 	locales: Record<string, string>,
-	mobile: boolean,
 	onCreated: (content: contentStruct) => void,
 	onError: (error: responseErrorStruct) => void,
 	template: string
@@ -52,14 +50,16 @@ export type TemplateContentCreateProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function Create(props: TemplateContentCreateProps) {
+export default function Create(
+	{ locales, onCreated, onError, template }: TemplateContentCreateProps
+) {
 
 	// State
 	const [fieldErrors, fieldErrorsSet] = useState<Record<string, any>>({});
 	const [preview, previewSet] = useState(false);
 	const [record, recordSet] = useState<Omit<contentStruct, 'type'>>({
-		locale: Object.keys(props.locales)[0],
-		template: props.template,
+		locale: Object.keys(locales)[0],
+		template,
 		subject: '',
 		text: '',
 		html: ''
@@ -76,7 +76,7 @@ export default function Create(props: TemplateContentCreateProps) {
 			const oRecord = { ...record, type, _id: data }
 
 			// Tell the parent about the new record
-			props.onCreated(oRecord);
+			onCreated(oRecord);
 
 		}, (error: responseErrorStruct) => {
 			if(error.code === errors.body.DATA_FIELDS) {
@@ -101,11 +101,11 @@ export default function Create(props: TemplateContentCreateProps) {
 				}
 
 				// Show the errors
-				if(props.onError) {
-					props.onError({ code: 0, msg: lLines.join('\n') });
+				if(onError) {
+					onError({ code: 0, msg: lLines.join('\n') });
 				}
 			} else {
-				props.onError(error);
+				onError(error);
 			}
 		});
 	}
@@ -115,26 +115,20 @@ export default function Create(props: TemplateContentCreateProps) {
 
 		// Clear error
 		if(field in fieldErrors) {
-			const oErrors = clone(fieldErrors);
+			const oErrors = { ...fieldErrors };
 			delete oErrors[field];
 			fieldErrorsSet(oErrors);
 		}
 
-		// Clone the record
-		const oRecord = clone(record);
-
-		// Update the field
-		oRecord[field] = value;
-
-		// Store the new record
-		recordSet(oRecord);
+		// Set the new record
+		recordSet(o => { return { ...o, [field]: value } });
 	}
 
 	// Called when the type is changed
 	function typeChanged(value: string) {
 
 		// Clone the current record
-		const oRecord = clone(record);
+		const oRecord = { ...record };
 
 		// If the new type is email
 		if(value === 'email') {
@@ -200,7 +194,7 @@ export default function Create(props: TemplateContentCreateProps) {
 						onChange={ev => recordChanged('locale', ev.target.value)}
 						value={record.locale}
 					>
-						{omap(props.locales, (v,k) =>
+						{omap(locales, (v,k) =>
 							<option key={k} value={k}>{v}</option>
 						)}
 					</Select>
@@ -229,13 +223,12 @@ export default function Create(props: TemplateContentCreateProps) {
 				<Button color="primary" onClick={create} variant="contained">Add Content</Button>
 				{preview &&
 					<Preview
-						mobile={props.mobile}
 						onClose={() => previewSet(false)}
 						onError={(error: responseErrorStruct) => {
 							if(error.code === errors.body.DATA_FIELDS) {
 								fieldErrorsSet(errorTree(error.msg));
 							} else {
-								props.onError(error);
+								onError(error);
 							}
 							previewSet(false);
 						}}
@@ -250,7 +243,6 @@ export default function Create(props: TemplateContentCreateProps) {
 // Valid props
 Create.propTypes = {
 	locales: PropTypes.objectOf(PropTypes.string).isRequired,
-	mobile: PropTypes.bool.isRequired,
 	onCreated: PropTypes.func.isRequired,
 	onError: PropTypes.func,
 	template: PropTypes.string.isRequired

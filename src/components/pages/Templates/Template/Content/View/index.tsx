@@ -24,7 +24,6 @@ import SMS from './SMS';
 import { responseErrorStruct } from '@ouroboros/body';
 import { contentStruct } from '../..';
 export type ViewProps = {
-	mobile: boolean,
 	onError: (error: responseErrorStruct) => void,
 	value: contentStruct
 }
@@ -39,27 +38,26 @@ export type ViewProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function View(props: ViewProps) {
+export default function View({ onError, value }: ViewProps) {
 
 	// State
-	const [preview, previewSet] = useState(false);
+	const [ preview, previewSet ] = useState(false);
 
 	// Render
 	return (
 		<Box className="content_view">
-			{(props.value.type === 'email' &&
-				<Email {...props} key={props.value._id} />
-			) || (props.value.type === 'sms' &&
-				<SMS {...props} key={props.value._id} />
+			{(value.type === 'email' &&
+				<Email key={value._id} value={value} />
+			) || (value.type === 'sms' &&
+				<SMS key={value._id} value={value} />
 			)}
 			<Box className="actions">
 				<Button color="info" onClick={() => previewSet(true)} variant="contained">Preview</Button>
 				{preview &&
 					<Preview
-						mobile={props.mobile}
 						onClose={() => previewSet(false)}
-						onError={props.onError}
-						value={props.value}
+						onError={onError}
+						value={value}
 					/>
 				}
 			</Box>
@@ -69,10 +67,9 @@ export default function View(props: ViewProps) {
 
 // Valid props
 View.propTypes = {
-	mobile: PropTypes.bool.isRequired,
 	onError: PropTypes.func.isRequired,
 	value: PropTypes.shape({
 		_id: PropTypes.string.isRequired,
-		type: PropTypes.oneOf(['email', 'sms']).isRequired
+		type: PropTypes.oneOf([ 'email', 'sms' ]).isRequired
 	})
 }

@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { responseErrorStruct } from '@ouroboros/body';
 export type LocalesProps = {
-    mobile: boolean;
     onError: (error: responseErrorStruct) => void;
     onSuccess: (type: string) => void;
 };
@@ -24,10 +23,9 @@ export type LocalesProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Locales(props: LocalesProps): React.JSX.Element;
+declare function Locales({ onError, onSuccess }: LocalesProps): React.JSX.Element;
 declare namespace Locales {
     var propTypes: {
-        mobile: PropTypes.Validator<boolean>;
         onError: PropTypes.Validator<(...args: any[]) => any>;
         onSuccess: PropTypes.Validator<(...args: any[]) => any>;
     };

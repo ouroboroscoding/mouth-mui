@@ -18,7 +18,6 @@ import Typography from '@mui/material/Typography';
 // Types
 import { contentStruct } from '../../';
 export type SMSProps = {
-	mobile: boolean,
 	value: contentStruct
 }
 
@@ -32,7 +31,7 @@ export type SMSProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-export default function SMS(props: SMSProps) {
+export default function SMS({ value }: SMSProps) {
 
 	// Render
 	return (
@@ -41,8 +40,8 @@ export default function SMS(props: SMSProps) {
 				<Typography><strong>Content</strong></Typography>
 			</Grid>
 			<Grid item xs={12} md={8} lg={10} xl={11}>
-				{props.value.content &&
-					<Typography style={{whiteSpace: 'pre-wrap'}}>{props.value.content}</Typography>
+				{value.content &&
+					<Typography style={{whiteSpace: 'pre-wrap'}}>{value.content}</Typography>
 				}
 			</Grid>
 		</Grid>
@@ -51,7 +50,6 @@ export default function SMS(props: SMSProps) {
 
 // Valid props
 SMS.propTypes = {
-	mobile: PropTypes.bool.isRequired,
 	value: PropTypes.exact({
 		_id: PropTypes.string.isRequired,
 		_created: PropTypes.number,

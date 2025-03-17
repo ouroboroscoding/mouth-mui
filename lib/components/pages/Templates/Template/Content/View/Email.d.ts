@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { contentStruct } from '../../';
 export type EmailProps = {
-    mobile: boolean;
     value: contentStruct;
 };
 /**
@@ -23,10 +22,9 @@ export type EmailProps = {
  * @param Object props Properties passed to the component
  * @returns React.Component
  */
-declare function Email(props: EmailProps): React.JSX.Element;
+declare function Email({ value }: EmailProps): React.JSX.Element;
 declare namespace Email {
     var propTypes: {
-        mobile: PropTypes.Validator<boolean>;
         value: PropTypes.Requireable<Required<PropTypes.InferProps<{
             _id: PropTypes.Validator<string>;
             _created: PropTypes.Requireable<number>;
