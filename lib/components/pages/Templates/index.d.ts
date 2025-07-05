@@ -10,8 +10,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { responseErrorStruct } from '@ouroboros/body';
 export type TemplatesProps = {
-    onError: (error: responseErrorStruct) => void;
-    onSuccess: (type: string) => void;
+    onError?: (error: responseErrorStruct) => void;
+    onSuccess?: (type: string) => void;
 };
 /**
  * Templates
@@ -26,8 +26,8 @@ export type TemplatesProps = {
 declare function Templates({ onError, onSuccess }: TemplatesProps): React.JSX.Element;
 declare namespace Templates {
     var propTypes: {
-        onError: PropTypes.Validator<(...args: any[]) => any>;
-        onSuccess: PropTypes.Validator<(...args: any[]) => any>;
+        onError: PropTypes.Requireable<(...args: any[]) => any>;
+        onSuccess: PropTypes.Requireable<(...args: any[]) => any>;
     };
 }
 export default Templates;

@@ -35,7 +35,7 @@ import { templateStruct } from './Template';
 export interface CreateProps {
 	onCancel?: () => void,
 	onCreated: (template: templateStruct) => void,
-	onError: (error: responseErrorStruct) => void
+	onError?: (error: responseErrorStruct) => void
 }
 
 /**
@@ -132,5 +132,5 @@ export default function Create({ onCancel, onCreated, onError }: CreateProps) {
 Create.propTypes = {
 	onCancel: PropTypes.func,
 	onCreated: PropTypes.func.isRequired,
-	onError: PropTypes.func.isRequired,
+	onError: PropTypes.func,
 }

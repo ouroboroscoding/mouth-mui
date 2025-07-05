@@ -24,7 +24,7 @@ import SMS from './SMS';
 import { responseErrorStruct } from '@ouroboros/body';
 import { contentStruct } from '../..';
 export type ViewProps = {
-	onError: (error: responseErrorStruct) => void,
+	onError?: (error: responseErrorStruct) => void,
 	value: contentStruct
 }
 
@@ -67,7 +67,7 @@ export default function View({ onError, value }: ViewProps) {
 
 // Valid props
 View.propTypes = {
-	onError: PropTypes.func.isRequired,
+	onError: PropTypes.func,
 	value: PropTypes.shape({
 		_id: PropTypes.string.isRequired,
 		type: PropTypes.oneOf([ 'email', 'sms' ]).isRequired

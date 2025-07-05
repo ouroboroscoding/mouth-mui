@@ -28,8 +28,8 @@ import Template, { templateStruct } from './Template';
 // Types
 import { responseErrorStruct } from '@ouroboros/body';
 export type TemplatesProps = {
-	onError: (error: responseErrorStruct) => void,
-	onSuccess: (type: string) => void
+	onError?: (error: responseErrorStruct) => void,
+	onSuccess?: (type: string) => void
 }
 
 /**
@@ -82,7 +82,9 @@ export default function Templates({ onError, onSuccess }: TemplatesProps) {
 	function templateCreated(template: templateStruct) {
 
 		// Notify parent
-		onSuccess('template_create');
+		if(onSuccess) {
+			onSuccess('template_create');
+		}
 
 		// Hide the create form
 		createSet(false);
@@ -96,7 +98,9 @@ export default function Templates({ onError, onSuccess }: TemplatesProps) {
 	function templateUpdated(template: templateStruct) {
 
 		// Notify parent
-		onSuccess('template_update');
+		if(onSuccess) {
+			onSuccess('template_update');
+		}
 
 		// Work on latest
 		templatesSet(l =>
@@ -133,7 +137,11 @@ export default function Templates({ onError, onSuccess }: TemplatesProps) {
 					key={o._id}
 					locales={locales}
 					onChange={templateUpdated}
-					onContent={type => onSuccess(`content_${type}`)}
+					onContent={type => {
+						if(onSuccess) {
+							onSuccess(`content_${type}`)
+						}
+					}}
 					onError={onError}
 					rights={{
 						content: rightsContent,
@@ -148,6 +156,6 @@ export default function Templates({ onError, onSuccess }: TemplatesProps) {
 
 // Valid props
 Templates.propTypes = {
-	onError: PropTypes.func.isRequired,
-	onSuccess: PropTypes.func.isRequired
+	onError: PropTypes.func,
+	onSuccess: PropTypes.func
 }

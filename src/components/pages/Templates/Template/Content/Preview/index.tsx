@@ -30,7 +30,7 @@ import { contentStruct } from '../..';
 import { responseErrorStruct } from '@ouroboros/body';
 export type PreviewProps = {
 	onClose: () => void,
-	onError: (error: responseErrorStruct) => void,
+	onError?: (error: responseErrorStruct) => void,
 	value: contentStruct
 }
 
@@ -54,8 +54,14 @@ export default function Preview({ onClose, onError, value }: PreviewProps) {
 		mouth.create(
 			`template/${value.type}/generate`,
 			value
-		).then(previewSet, onError);
-	}, [value, onError]);
+		).then(previewSet, error => {
+			if(onError) {
+				onError(error);
+			} else {
+				throw new Error(JSON.stringify(error));
+			}
+		})
+	}, [ value, onError ]);
 
 	// Render
 	return (
@@ -91,7 +97,7 @@ export default function Preview({ onClose, onError, value }: PreviewProps) {
 // Valid props
 Preview.propTypes = {
 	onClose: PropTypes.func.isRequired,
-	onError: PropTypes.func.isRequired,
+	onError: PropTypes.func,
 	value: PropTypes.shape({
 		locale: PropTypes.string.isRequired,
 		template: PropTypes.string,
