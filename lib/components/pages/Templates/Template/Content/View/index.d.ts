@@ -11,7 +11,7 @@ import React from 'react';
 import { responseErrorStruct } from '@ouroboros/body';
 import { contentStruct } from '../..';
 export type ViewProps = {
-    onError: (error: responseErrorStruct) => void;
+    onError?: (error: responseErrorStruct) => void;
     value: contentStruct;
 };
 /**
@@ -27,7 +27,7 @@ export type ViewProps = {
 declare function View({ onError, value }: ViewProps): React.JSX.Element;
 declare namespace View {
     var propTypes: {
-        onError: PropTypes.Validator<(...args: any[]) => any>;
+        onError: PropTypes.Requireable<(...args: any[]) => any>;
         value: PropTypes.Requireable<PropTypes.InferProps<{
             _id: PropTypes.Validator<string>;
             type: PropTypes.Validator<string>;

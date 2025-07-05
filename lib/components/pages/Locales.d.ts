@@ -26,8 +26,8 @@ export type LocalesProps = {
 declare function Locales({ onError, onSuccess }: LocalesProps): React.JSX.Element;
 declare namespace Locales {
     var propTypes: {
-        onError: PropTypes.Validator<(...args: any[]) => any>;
-        onSuccess: PropTypes.Validator<(...args: any[]) => any>;
+        onError: PropTypes.Requireable<(...args: any[]) => any>;
+        onSuccess: PropTypes.Requireable<(...args: any[]) => any>;
     };
 }
 export default Locales;

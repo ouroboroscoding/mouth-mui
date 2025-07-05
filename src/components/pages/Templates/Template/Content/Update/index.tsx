@@ -30,7 +30,7 @@ import { responseErrorStruct } from '@ouroboros/body';
 import { contentStruct } from '../..';
 export type updateStruct = Omit<contentStruct, 'type'>;
 export type UpdateProps = {
-	onError: (error: responseErrorStruct) => void,
+	onError?: (error: responseErrorStruct) => void,
 	onUpdated: (content: contentStruct) => void,
 	value: contentStruct
 }
@@ -82,8 +82,10 @@ export default function Update({ onError, onUpdated, value }: UpdateProps) {
 				if(onError) {
 					onError({ code: 0, msg: lLines.join('\n') });
 				}
-			} else {
+			} else if(onError) {
 				onError(error);
+			} else {
+				throw new Error(JSON.stringify(error));
 			}
 		});
 	}
@@ -128,8 +130,10 @@ export default function Update({ onError, onUpdated, value }: UpdateProps) {
 						onError={(error: responseErrorStruct) => {
 							if(error.code === errors.body.DATA_FIELDS) {
 								fieldErrorsSet(errorTree(error.msg));
-							} else {
+							} else if(onError) {
 								onError(error);
+							} else {
+								throw new Error(JSON.stringify(error));
 							}
 							previewSet(false);
 						}}

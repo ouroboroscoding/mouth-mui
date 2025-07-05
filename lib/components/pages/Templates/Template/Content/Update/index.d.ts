@@ -12,7 +12,7 @@ import { responseErrorStruct } from '@ouroboros/body';
 import { contentStruct } from '../..';
 export type updateStruct = Omit<contentStruct, 'type'>;
 export type UpdateProps = {
-    onError: (error: responseErrorStruct) => void;
+    onError?: (error: responseErrorStruct) => void;
     onUpdated: (content: contentStruct) => void;
     value: contentStruct;
 };

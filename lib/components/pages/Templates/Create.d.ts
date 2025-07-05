@@ -13,7 +13,7 @@ import { templateStruct } from './Template';
 export interface CreateProps {
     onCancel?: () => void;
     onCreated: (template: templateStruct) => void;
-    onError: (error: responseErrorStruct) => void;
+    onError?: (error: responseErrorStruct) => void;
 }
 /**
  * Create
@@ -30,7 +30,7 @@ declare namespace Create {
     var propTypes: {
         onCancel: PropTypes.Requireable<(...args: any[]) => any>;
         onCreated: PropTypes.Validator<(...args: any[]) => any>;
-        onError: PropTypes.Validator<(...args: any[]) => any>;
+        onError: PropTypes.Requireable<(...args: any[]) => any>;
     };
 }
 export default Create;

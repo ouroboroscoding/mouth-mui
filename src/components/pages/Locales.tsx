@@ -97,7 +97,9 @@ export default function Locales({ onError, onSuccess }: LocalesProps) {
 				if(data) {
 
 					// Notify the parent
-					onSuccess('create');
+					if(onSuccess) {
+						onSuccess('create');
+					}
 
 					// Close the create form
 					createSet(false);
@@ -140,7 +142,9 @@ export default function Locales({ onError, onSuccess }: LocalesProps) {
 			if(data) {
 
 				// Notify the parent
-				onSuccess('delete');
+				if(onSuccess) {
+					onSuccess('delete');
+				}
 
 				// Look for the record
 				const i = afindi(records, '_id', key);
@@ -183,7 +187,9 @@ export default function Locales({ onError, onSuccess }: LocalesProps) {
 				if(data) {
 
 					// Notify the parent
-					onSuccess('update');
+					if(onSuccess) {
+						onSuccess('update');
+					}
 
 					// Look for the record
 					const i = afindi(records, '_id', key);
@@ -262,6 +268,6 @@ export default function Locales({ onError, onSuccess }: LocalesProps) {
 
 // Valid props
 Locales.propTypes = {
-	onError: PropTypes.func.isRequired,
-	onSuccess: PropTypes.func.isRequired
+	onError: PropTypes.func,
+	onSuccess: PropTypes.func
 }
