@@ -61,7 +61,7 @@ export type typeOption = 'email' | 'sms';
 export type TemplateProps = {
 	locales: Record<string, string>,
 	onChange: (template: templateStruct) => void,
-	onError: (error: responseErrorStruct) => void,
+	onError?: (error: responseErrorStruct) => void,
 	onContent: (type: string) => void,
 	rights: {
 		template: idStruct,
@@ -289,7 +289,7 @@ export default function Template(
 Template.propTypes = {
 	locales: PropTypes.objectOf(PropTypes.string).isRequired,
 	onChange: PropTypes.func.isRequired,
-	onError: PropTypes.func.isRequired,
+	onError: PropTypes.func,
 	onContent: PropTypes.func.isRequired,
 	rights: PropTypes.exact({
 		template: PropTypes.exact({

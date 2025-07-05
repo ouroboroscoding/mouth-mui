@@ -12,7 +12,7 @@ import { contentStruct } from '../..';
 import { responseErrorStruct } from '@ouroboros/body';
 export type PreviewProps = {
     onClose: () => void;
-    onError: (error: responseErrorStruct) => void;
+    onError?: (error: responseErrorStruct) => void;
     value: contentStruct;
 };
 /**
@@ -29,7 +29,7 @@ declare function Preview({ onClose, onError, value }: PreviewProps): React.JSX.E
 declare namespace Preview {
     var propTypes: {
         onClose: PropTypes.Validator<(...args: any[]) => any>;
-        onError: PropTypes.Validator<(...args: any[]) => any>;
+        onError: PropTypes.Requireable<(...args: any[]) => any>;
         value: PropTypes.Requireable<PropTypes.InferProps<{
             locale: PropTypes.Validator<string>;
             template: PropTypes.Requireable<string>;

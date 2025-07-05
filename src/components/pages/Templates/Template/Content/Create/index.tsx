@@ -36,7 +36,7 @@ import { responseErrorStruct } from '@ouroboros/body';
 export type TemplateContentCreateProps = {
 	locales: Record<string, string>,
 	onCreated: (content: contentStruct) => void,
-	onError: (error: responseErrorStruct) => void,
+	onError?: (error: responseErrorStruct) => void,
 	template: string
 }
 
@@ -103,9 +103,13 @@ export default function Create(
 				// Show the errors
 				if(onError) {
 					onError({ code: 0, msg: lLines.join('\n') });
+				} else {
+					throw new Error(JSON.stringify(error));
 				}
-			} else {
+			} else if(onError) {
 				onError(error);
+			} else {
+				throw new Error(JSON.stringify(error));
 			}
 		});
 	}
@@ -227,8 +231,10 @@ export default function Create(
 						onError={(error: responseErrorStruct) => {
 							if(error.code === errors.body.DATA_FIELDS) {
 								fieldErrorsSet(errorTree(error.msg));
-							} else {
+							} else if(onError) {
 								onError(error);
+							} else {
+								throw new Error(JSON.stringify(error));
 							}
 							previewSet(false);
 						}}

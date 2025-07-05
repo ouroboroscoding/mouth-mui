@@ -33,7 +33,7 @@ export type typeOption = 'email' | 'sms';
 export type TemplateProps = {
     locales: Record<string, string>;
     onChange: (template: templateStruct) => void;
-    onError: (error: responseErrorStruct) => void;
+    onError?: (error: responseErrorStruct) => void;
     onContent: (type: string) => void;
     rights: {
         template: idStruct;
@@ -58,7 +58,7 @@ declare namespace Template {
             [x: string]: string | null | undefined;
         }>;
         onChange: PropTypes.Validator<(...args: any[]) => any>;
-        onError: PropTypes.Validator<(...args: any[]) => any>;
+        onError: PropTypes.Requireable<(...args: any[]) => any>;
         onContent: PropTypes.Validator<(...args: any[]) => any>;
         rights: PropTypes.Requireable<Required<PropTypes.InferProps<{
             template: PropTypes.Validator<Required<PropTypes.InferProps<{

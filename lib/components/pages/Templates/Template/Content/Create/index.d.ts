@@ -13,7 +13,7 @@ import { responseErrorStruct } from '@ouroboros/body';
 export type TemplateContentCreateProps = {
     locales: Record<string, string>;
     onCreated: (content: contentStruct) => void;
-    onError: (error: responseErrorStruct) => void;
+    onError?: (error: responseErrorStruct) => void;
     template: string;
 };
 /**
