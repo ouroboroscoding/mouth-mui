@@ -16,6 +16,7 @@ import Subscribe, { SubscribeCallback, SubscribeReturn } from '@ouroboros/subscr
 import mouth from '@ouroboros/mouth';
 
 // Types
+import { responseStruct } from '@ouroboros/body';
 export type Option = {
 	id: string,
 	text: string
@@ -171,13 +172,33 @@ class Locales extends Subscribe {
 		this.fetching = true;
 
 		// Fetch the data from the server
-		mouth.read('locales').then((list: any) => {
+		mouth.read('locales').then((res: responseStruct) => {
+
+			// If we failed
+			if(res.error) {
+
+				// If we haven't hit the limit
+				if(this.failed < 3) {
+
+					// Increase the failed count
+					++this.failed;
+
+					// Fetch again
+					this.fetch();
+				}
+
+				// Else, we can't keep trying, notify the user
+				else {
+					events.get('error').trigger(res.error);
+				}
+				return;
+			}
 
 			// If there's data
-			if(list) {
+			if(res.data) {
 
 				// Trigger all callbacks
-				this.set(list);
+				this.set(res.data);
 			}
 
 			// Finish running
@@ -185,29 +206,11 @@ class Locales extends Subscribe {
 
 			// Reset the count
 			this.failed = 0;
-
-		}, error => {
-
-			// If we haven't hit the limit
-			if(this.failed < 3) {
-
-				// Increase the failed count
-				++this.failed;
-
-				// Fetch again
-				this.fetch();
-			}
-
-			// Else, we can't keep trying, notify the user
-			else {
-				events.get('error').trigger(error);
-			}
-
 		}).finally(() => {
 
 			// Regardless of the outcome, we're done fetching
 			this.fetching = false;
-		})
+		});
 	}
 
 	/**

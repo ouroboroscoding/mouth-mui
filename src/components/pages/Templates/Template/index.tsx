@@ -36,7 +36,7 @@ import ContentView from './Content/View';
 import Variables from './Variables';
 
 // Types
-import { responseErrorStruct } from '@ouroboros/body';
+import { responseErrorStruct, responseStruct } from '@ouroboros/body';
 import { idStruct } from '@ouroboros/brain-react';
 export type contentStruct = {
 	_id?: string,
@@ -134,21 +134,28 @@ export default function Template(
 	function update() {
 
 		// Create the data in the system
-		mouth.update('template', edit).then((data: boolean) => {
+		mouth.update('template', edit).then((res: responseStruct) => {
+
+			// If we failed
+			if(res.error) {
+				if(res.error.code === errors.body.DB_DUPLICATE) {
+					refName.current?.error('Duplicate');
+				} else {
+					if(onError) {
+						onError(res.error);
+					} else {
+						throw new Error(JSON.stringify(res.error));
+					}
+				}
+				return;
+			}
 
 			// Hide the form
 			editSet(false);
 
 			// Let the parent know
 			onChange(edit as templateStruct);
-
-		}, (error: responseErrorStruct) => {
-			if(error.code === errors.body.DB_DUPLICATE) {
-				refName.current?.error('Duplicate');
-			} else {
-				return false;
-			}
-		})
+		});
 	}
 
 	// View toggle
@@ -159,7 +166,7 @@ export default function Template(
 			if(contents === false) {
 				mouth.read('template/contents', {
 					template: value._id
-				}).then(contentsSet);
+				}).then((res: responseStruct) => contentsSet(res.data));
 			}
 			viewSet(true);
 		}

@@ -27,7 +27,7 @@ import SMS from './SMS';
 
 // Types
 import { contentStruct } from '../..';
-import { responseErrorStruct } from '@ouroboros/body';
+import { responseErrorStruct, responseStruct } from '@ouroboros/body';
 export type PreviewProps = {
 	onClose: () => void,
 	onError?: (error: responseErrorStruct) => void,
@@ -54,12 +54,21 @@ export default function Preview({ onClose, onError, value }: PreviewProps) {
 		mouth.create(
 			`template/${value.type}/generate`,
 			value
-		).then(previewSet, error => {
-			if(onError) {
-				onError(error);
-			} else {
-				throw new Error(JSON.stringify(error));
+		).then((res: responseStruct) => {
+
+			// If we failed
+			if(res.error) {
+				if(onError) {
+					onError(res.error);
+					return;
+				} else {
+					throw new Error(JSON.stringify(res.error));
+				}
 			}
+
+			// Set the preview
+			previewSet(res.data);
+
 		})
 	}, [ value, onError ]);
 
