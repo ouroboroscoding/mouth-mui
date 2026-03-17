@@ -42,7 +42,7 @@ const LocaleTree = new Tree(LocaleDef, {
 });
 
 // Types
-import { responseErrorStruct } from '@ouroboros/body';
+import { responseErrorStruct, responseStruct } from '@ouroboros/body';
 export type LocalesProps = {
 	onError: (error: responseErrorStruct) => void,
 	onSuccess: (type: string) => void
@@ -72,9 +72,9 @@ export default function Locales({ onError, onSuccess }: LocalesProps) {
 
 		// If we have read rights
 		if(rights.read) {
-			mouth.read('locales').then(recordsSet);
+			mouth.read('locales').then((res: responseStruct) => recordsSet(res.data));
 		} else {
-			recordsSet([]);
+			recordsSet([ ]);
 		}
 
 		// If we don't have create rights
@@ -91,10 +91,26 @@ export default function Locales({ onError, onSuccess }: LocalesProps) {
 		return new Promise((resolve, reject) => {
 
 			// Create the new locale
-			mouth.create('locale', locale).then((data: string) => {
+			mouth.create('locale', locale).then((res: responseStruct) => {
+
+				// If we failed
+				if(res.error) {
+					if(res.error.code === errors.body.DB_NO_RECORD) {
+						return reject([['_id', 'Already in use']]);
+					} else if(res.error.code === errors.body.DATA_FIELDS) {
+						return reject(res.error.msg);
+					} else {
+						if(onError) {
+							onError(res.error);
+							return reject([ ]);
+						} else {
+							throw new Error(JSON.stringify(res.error));
+						}
+					}
+				}
 
 				// If we were successful
-				if(data) {
+				if(res.data) {
 
 					// Notify the parent
 					if(onSuccess) {
@@ -114,20 +130,7 @@ export default function Locales({ onError, onSuccess }: LocalesProps) {
 				}
 
 				// Resolve with the form
-				resolve(data ? true : false);
-
-			}, (error: responseErrorStruct) => {
-				if(error.code === errors.body.DB_NO_RECORD) {
-					reject([['_id', 'Already in use']]);
-				} else if(error.code === errors.body.DATA_FIELDS) {
-					reject(error.msg);
-				} else {
-					if(onError) {
-						onError(error);
-					} else {
-						throw new Error(JSON.stringify(error));
-					}
-				}
+				resolve(res.data ? true : false);
 			});
 		});
 	}
@@ -136,10 +139,19 @@ export default function Locales({ onError, onSuccess }: LocalesProps) {
 	function deleteClick(key: string) {
 
 		// Delete the existing locale
-		mouth.delete('locale', { _id: key }).then((data: boolean) => {
+		mouth.delete('locale', { _id: key }).then((res: responseStruct) => {
+
+			// If we failed
+			if(res.error) {
+				if(onError) {
+					return onError(res.error);
+				} else {
+					throw new Error(JSON.stringify(res.error));
+				}
+			}
 
 			// If it was successful
-			if(data) {
+			if(res.data) {
 
 				// Notify the parent
 				if(onSuccess) {
@@ -162,12 +174,6 @@ export default function Locales({ onError, onSuccess }: LocalesProps) {
 					locales.set(lRecords);
 				}
 			}
-		}, (error: responseErrorStruct) => {
-			if(onError) {
-				onError(error);
-			} else {
-				throw new Error(JSON.stringify(error));
-			}
 		});
 	}
 
@@ -181,10 +187,24 @@ export default function Locales({ onError, onSuccess }: LocalesProps) {
 		return new Promise((resolve, reject) => {
 
 			// Update the locale on the server
-			mouth.update('locale', locale).then((data: boolean) => {
+			mouth.update('locale', locale).then((res: responseStruct) => {
+
+				// If we failed
+				if(res.error) {
+					if(res.error.code === errors.body.DATA_FIELDS) {
+						return reject(res.error.msg);
+					} else {
+						if(onError) {
+							onError(res.error);
+							return reject([ ]);
+						} else {
+							throw new Error(JSON.stringify(res.error));
+						}
+					}
+				}
 
 				// If we were successful
-				if(data) {
+				if(res.data) {
 
 					// Notify the parent
 					if(onSuccess) {
@@ -209,18 +229,7 @@ export default function Locales({ onError, onSuccess }: LocalesProps) {
 				}
 
 				// Resolve with the Form
-				resolve(data);
-
-			}, (error: responseErrorStruct) => {
-				if(error.code === errors.body.DATA_FIELDS) {
-					reject(error.msg);
-				} else {
-					if(onError) {
-						onError(error);
-					} else {
-						throw new Error(JSON.stringify(error));
-					}
-				}
+				resolve(res.data);
 			});
 		});
 	}

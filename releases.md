@@ -1,5 +1,8 @@
 # @ouroboros/mouth-mui releases
 
+## 2.1.?
+- Updated `@ouroboros/body` and `@ouroboros/mouth` to latest
+
 ## 2.1.2
 - Completed documentation.
 

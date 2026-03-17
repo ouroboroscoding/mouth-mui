@@ -30,7 +30,7 @@ import Variables from './Template/Variables';
 const oNameNode = new Node(TemplateDef.name);
 
 // Types
-import { responseErrorStruct } from '@ouroboros/body';
+import { responseErrorStruct, responseStruct } from '@ouroboros/body';
 import { templateStruct } from './Template';
 export interface CreateProps {
 	onCancel?: () => void,
@@ -53,7 +53,7 @@ export default function Create({ onCancel, onCreated, onError }: CreateProps) {
 	// State
 	const [ record, recordSet ] = useState<templateStruct>({
 		name: '',
-		variables: {}
+		variables: { }
 	});
 
 	// Refs
@@ -72,24 +72,28 @@ export default function Create({ onCancel, onCreated, onError }: CreateProps) {
 	function create() {
 
 		// Create the data in the system
-		mouth.create('template', record).then((data: string) => {
+		mouth.create('template', record).then((res: responseStruct) => {
+
+			// If we failed
+			if(res.error) {
+				if(res.error.code === errors.body.DB_DUPLICATE) {
+					refName.current?.error('Duplicate');
+				} else {
+					if(onError) {
+						onError(res.error);
+						return;
+					} else {
+						throw new Error(JSON.stringify(res.error));
+					}
+				}
+			}
 
 			// Add the ID to the record
-			record._id = data;
+			record._id = res.data;
 
 			// Let the parent know
 			onCreated({ ...record });
-		}, (error: responseErrorStruct) => {
-			if(error.code === errors.body.DB_DUPLICATE) {
-				refName.current?.error('Duplicate');
-			} else {
-				if(onError) {
-					onError(error);
-				} else {
-					throw new Error(JSON.stringify(error));
-				}
-			}
-		})
+		});
 	}
 
 	// Render
