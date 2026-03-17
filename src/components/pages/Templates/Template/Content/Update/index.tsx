@@ -26,7 +26,7 @@ import Preview from '../Preview';
 import SMS from './SMS';
 
 // Types
-import { responseErrorStruct } from '@ouroboros/body';
+import { responseErrorStruct, responseStruct } from '@ouroboros/body';
 import { contentStruct } from '../..';
 export type updateStruct = Omit<contentStruct, 'type'>;
 export type UpdateProps = {
@@ -56,37 +56,43 @@ export default function Update({ onError, onUpdated, value }: UpdateProps) {
 	function update() {
 
 		// Send the record data to the server
-		mouth.update(`template/${value.type}`, record).then(() => {
-			onUpdated({type: value.type, ...record});
-		}, (error: responseErrorStruct) => {
-			if(error.code === errors.body.DATA_FIELDS) {
-				fieldErrorsSet(errorTree(error.msg));
-			} else if(error.code === errors.TEMPLATE_CONTENT_ERROR) {
-				const oLines: { templates: string[], variables: string[] } = { templates: [], variables: [] };
-				for(const l of error.msg) {
-					if(l[0] === 'template') {
-						oLines.templates.push(l[1]);
-					} else if(l[0] === 'variable') {
-						oLines.variables.push(l[1]);
-					}
-				}
-				const lLines = [];
-				if(oLines.templates.length) {
-					lLines.push('The following templates are invalid: ' + oLines.templates.join(', '));
-				}
-				if(oLines.variables.length) {
-					lLines.push('The following variables are invalid: ' + oLines.variables.join(', '));
-				}
+		mouth.update(`template/${value.type}`, record).then((res: responseStruct) => {
 
-				// Show the errors
-				if(onError) {
-					onError({ code: 0, msg: lLines.join('\n') });
+			// If we failed
+			if(res.error) {
+				if(res.error.code === errors.body.DATA_FIELDS) {
+					fieldErrorsSet(errorTree(res.error.msg));
+				} else if(res.error.code === errors.TEMPLATE_CONTENT_ERROR) {
+					const oLines: { templates: string[], variables: string[] } = { templates: [], variables: [] };
+					for(const l of res.error.msg) {
+						if(l[0] === 'template') {
+							oLines.templates.push(l[1]);
+						} else if(l[0] === 'variable') {
+							oLines.variables.push(l[1]);
+						}
+					}
+					const lLines = [];
+					if(oLines.templates.length) {
+						lLines.push('The following templates are invalid: ' + oLines.templates.join(', '));
+					}
+					if(oLines.variables.length) {
+						lLines.push('The following variables are invalid: ' + oLines.variables.join(', '));
+					}
+
+					// Show the errors
+					if(onError) {
+						onError({ code: 0, msg: lLines.join('\n') });
+					}
+				} else if(onError) {
+					onError(res.error);
+				} else {
+					throw new Error(JSON.stringify(res.error));
 				}
-			} else if(onError) {
-				onError(error);
-			} else {
-				throw new Error(JSON.stringify(error));
+				return;
 			}
+
+			// Let the parent know it was updated
+			onUpdated({type: value.type, ...record});
 		});
 	}
 

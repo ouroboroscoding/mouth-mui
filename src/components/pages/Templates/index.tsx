@@ -26,7 +26,7 @@ import Create from './Create'
 import Template, { templateStruct } from './Template';
 
 // Types
-import { responseErrorStruct } from '@ouroboros/body';
+import { responseErrorStruct, responseStruct } from '@ouroboros/body';
 export type TemplatesProps = {
 	onError?: (error: responseErrorStruct) => void,
 	onSuccess?: (type: string) => void
@@ -58,14 +58,14 @@ export default function Templates({ onError, onSuccess }: TemplatesProps) {
 
 		// If we have template read permissions
 		if(rightsTemplate.read) {
-			mouth.read('locales').then((data: Record<string, any>[]) => {
-				const oLocales: Record<string, string> = {};
-				for(const o of data) {
+			mouth.read('locales').then((res: responseStruct) => {
+				const oLocales: Record<string, string> = { };
+				for(const o of res.data) {
 					oLocales[o._id] = o.name;
 				}
 				localesSet(oLocales);
 			});
-			mouth.read('templates').then(templatesSet);
+			mouth.read('templates').then((res: responseStruct) => templatesSet(res.data));
 		} else {
 			localesSet({});
 			templatesSet([]);
